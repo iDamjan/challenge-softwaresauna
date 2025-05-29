@@ -1,9 +1,14 @@
-import { checkHorizontalChar } from "../utils/validations";
+import { checkHorizontalChar } from "@/utils/validations";
+import { checkVerticalChar, isValidAndUnvisited } from "@/utils/validations";
+import { DIRECTIONS } from "@/constants/directions";
+import type {
+  CheckDirection,
+  Direction,
+  DirectionsEnum,
+  PossibleDirections,
+} from "@/types/directions";
 
-import { checkVerticalChar, isValidAndUnvisited } from "../utils/validations";
-import { DIRECTIONS } from "../constants/directions";
-
-const POSSIBLE_DIRECTIONS = {
+const POSSIBLE_DIRECTIONS: PossibleDirections = {
   UP: { greenLight: false, handler: checkVerticalChar },
   DOWN: { greenLight: false, handler: checkVerticalChar },
   LEFT: { greenLight: false, handler: checkHorizontalChar },
@@ -11,18 +16,21 @@ const POSSIBLE_DIRECTIONS = {
 };
 
 // Update checkDirection to use visited set
-export function checkDirection(
+export function checkDirection({
   grid,
   currentRow,
   currentCol,
   visited = new Set(),
-  previousDirection = null
-) {
+  previousDirection = null,
+}: CheckDirection): Direction | null {
   // Direction reordering so it continues in right direction on different intersections
   const directionOrder = getDirectionOrder(previousDirection);
 
+  const possibleDirectionsKeys = Object.keys(POSSIBLE_DIRECTIONS) as Array<
+    keyof typeof DirectionsEnum
+  >;
   // Go through all possible directions and check if its valid and unvisited
-  Object.keys(POSSIBLE_DIRECTIONS).forEach((direction) => {
+  possibleDirectionsKeys.forEach((direction) => {
     POSSIBLE_DIRECTIONS[direction].greenLight = isValidAndUnvisited(
       currentRow + DIRECTIONS[direction].row,
       currentCol + DIRECTIONS[direction].col,
@@ -32,11 +40,13 @@ export function checkDirection(
     );
   });
   // Add validation to array
-  const validDirections = [];
+  const validDirections: Direction[] = [];
 
   directionOrder.forEach((direction) => {
     if (POSSIBLE_DIRECTIONS[direction].greenLight) {
-      validDirections.push(DIRECTIONS[direction]);
+      validDirections.push(
+        DIRECTIONS[direction as keyof typeof DirectionsEnum]
+      );
     }
   });
 
@@ -48,11 +58,14 @@ export function checkDirection(
 }
 
 // ---------------  LOCAL FUNCTIONS ---------------
-function getDirectionOrder(previousDirection) {
+function getDirectionOrder(previousDirection: Direction | null) {
   let directionOrder = [];
   if (previousDirection) {
     // Find the key of the previous direction
-    const prevDirKey = Object.keys(DIRECTIONS).find(
+    const directionKeys = Object.keys(DIRECTIONS) as Array<
+      keyof typeof DirectionsEnum
+    >;
+    const prevDirKey = directionKeys.find(
       (key) =>
         DIRECTIONS[key].row === previousDirection.row &&
         DIRECTIONS[key].col === previousDirection.col

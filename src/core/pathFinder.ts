@@ -1,6 +1,6 @@
 import walkPath from "./pathWalker";
 
-function findCharactersInPath(grid) {
+function findCharactersInPath(grid: string[]) {
   const { startingPointRow, startingPointColumn } = findStartingPoint(grid);
 
   console.log(startingPointRow, startingPointColumn);
@@ -21,11 +21,10 @@ function findCharactersInPath(grid) {
   return { alphabetCharactersInPath, pathAsCharacters, error };
 }
 
-function findStartingPoint(grid) {
+function findStartingPoint(grid: string[]) {
   for (let index = 0; index < grid.length; index++) {
     const path = grid[index];
     const startingPointColumn = path.indexOf("@");
-
     const startingPointRow = index;
 
     // If starting point index is bigger or equal to 0, means start is found

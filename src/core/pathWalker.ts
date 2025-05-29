@@ -1,9 +1,11 @@
 import { checkDirection } from "./directionChecker";
-import { isAlphabetChar } from "../utils/validations";
-import { INTERSECTION_DIRECTIONS } from "../constants/directions";
+import { isAlphabetChar } from "@/utils/validations";
+import { INTERSECTION_DIRECTIONS } from "@/constants/directions";
+import type { DirectionsEnum } from "@/types/directions";
+import type { Direction } from "@/types/directions";
 
 // Add a visited set to track coordinates
-function walkPath(grid, startRow, startCol) {
+function walkPath(grid: string[], startRow: number, startCol: number) {
   let currentRow = startRow;
   let currentCol = startCol;
   let alphabetCharactersInPath = "";
@@ -12,7 +14,7 @@ function walkPath(grid, startRow, startCol) {
   let direction = null;
 
   // Track visited coordinates as strings "row,col"
-  const visited = new Set();
+  const visited: Set<string> = new Set();
   visited.add(`${startRow},${startCol}`);
 
   // Walk through the elements, break the cycle if 'x' or not a valid direction
@@ -25,13 +27,13 @@ function walkPath(grid, startRow, startCol) {
     }
 
     // Find next direction (pass visited set)
-    const regularDirection = checkDirection(
+    const regularDirection = checkDirection({
       grid,
       currentRow,
       currentCol,
       visited,
-      previousDirection
-    );
+      previousDirection,
+    });
 
     if (!regularDirection) {
       // If there is no valid direction check for intersections
@@ -41,7 +43,6 @@ function walkPath(grid, startRow, startCol) {
         currentCol,
         visited
       );
-
       if (!intersection.state) {
         return {
           alphabetCharactersInPath,
@@ -62,8 +63,8 @@ function walkPath(grid, startRow, startCol) {
     pathAsCharacters += grid[currentRow][currentCol];
 
     // Move to next position
-    currentRow += direction.row;
-    currentCol += direction.col;
+    currentRow += direction?.row ?? 0;
+    currentCol += direction?.col ?? 0;
 
     // Mark as visited
     visited.add(`${currentRow},${currentCol}`);
@@ -75,19 +76,31 @@ function walkPath(grid, startRow, startCol) {
   return { alphabetCharactersInPath, pathAsCharacters, error: null };
 }
 
-function pathIntersectionHandler(grid, row, col, visited) {
-  let intersection = { state: false, direction: null };
+function pathIntersectionHandler(
+  grid: string[],
+  row: number,
+  col: number,
+  visited: Set<string>
+) {
+  let intersection = { state: false, direction: null } as {
+    state: boolean;
+    direction: Direction | null;
+  };
 
-  Object.keys(INTERSECTION_DIRECTIONS).forEach((direction) => {
+  const possibleDirectionsKeys = Object.keys(INTERSECTION_DIRECTIONS) as Array<
+    keyof typeof DirectionsEnum
+  >;
+
+  possibleDirectionsKeys.forEach((direction) => {
     const updatedRow = row + INTERSECTION_DIRECTIONS[direction].row;
     const updatedCol = col + INTERSECTION_DIRECTIONS[direction].col;
 
-    const validIntersectionDirection = checkDirection(
+    const validIntersectionDirection = checkDirection({
       grid,
-      updatedRow,
-      updatedCol,
-      visited
-    );
+      currentRow: updatedRow,
+      currentCol: updatedCol,
+      visited,
+    });
 
     if (validIntersectionDirection) {
       intersection.state = true;

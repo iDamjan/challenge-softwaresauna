@@ -1,4 +1,9 @@
-export function checkValidChar(row, col, pathsArray, directionChecker) {
+export function checkValidChar(
+  row: number,
+  col: number,
+  pathsArray: string[],
+  directionChecker: (char: string) => boolean
+) {
   // If coordinates goes out of bounds the path is no longer valid
   if (row < 0 || row >= pathsArray.length) return false;
   if (col < 0 || col >= pathsArray[row].length) return false;
