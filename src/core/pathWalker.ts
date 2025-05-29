@@ -8,7 +8,7 @@ function walkPath(grid, startRow, startCol) {
   let currentCol = startCol;
   let alphabetCharactersInPath = "";
   let pathAsCharacters = "";
-
+  let previousDirection = null;
   let direction = null;
 
   // Track visited coordinates as strings "row,col"
@@ -18,7 +18,7 @@ function walkPath(grid, startRow, startCol) {
   // Walk through the elements, break the cycle if 'x' or not a valid direction
   while (true) {
     const currentChar = grid[currentRow][currentCol];
-
+    console.log(currentChar);
     if (currentChar === "x") {
       pathAsCharacters += currentChar;
       break;
@@ -29,7 +29,8 @@ function walkPath(grid, startRow, startCol) {
       grid,
       currentRow,
       currentCol,
-      visited
+      visited,
+      previousDirection
     );
 
     if (!regularDirection) {
@@ -66,6 +67,9 @@ function walkPath(grid, startRow, startCol) {
 
     // Mark as visited
     visited.add(`${currentRow},${currentCol}`);
+
+    // Set previous direction so we know where to go on intersections
+    previousDirection = direction;
   }
 
   return { alphabetCharactersInPath, pathAsCharacters, error: null };

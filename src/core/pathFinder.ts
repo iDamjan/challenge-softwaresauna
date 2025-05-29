@@ -3,6 +3,15 @@ import walkPath from "./pathWalker";
 function findCharactersInPath(grid) {
   const { startingPointRow, startingPointColumn } = findStartingPoint(grid);
 
+  console.log(startingPointRow, startingPointColumn);
+  if (startingPointRow === -1) {
+    return {
+      alphabetCharactersInPath: "",
+      pathAsCharacters: "",
+      error: "No starting point found",
+    };
+  }
+
   const { alphabetCharactersInPath, pathAsCharacters, error } = walkPath(
     grid,
     startingPointRow,
@@ -27,7 +36,7 @@ function findStartingPoint(grid) {
 
   // If no starting point was found return -1
   // To be consistent we will return both indexes as -1
-  return { startingPointIndex: -1, pathIndex: -1 };
+  return { startingPointRow: -1, startingPointColumn: -1 };
 }
 
 export default findCharactersInPath;

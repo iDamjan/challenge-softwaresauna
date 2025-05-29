@@ -3,41 +3,70 @@ import { checkHorizontalChar } from "../utils/validations";
 import { checkVerticalChar, isValidAndUnvisited } from "../utils/validations";
 import { DIRECTIONS } from "../constants/directions";
 
+const POSSIBLE_DIRECTIONS = {
+  UP: { greenLight: false, handler: checkVerticalChar },
+  DOWN: { greenLight: false, handler: checkVerticalChar },
+  LEFT: { greenLight: false, handler: checkHorizontalChar },
+  RIGHT: { greenLight: false, handler: checkHorizontalChar },
+};
+
 // Update checkDirection to use visited set
 export function checkDirection(
   grid,
   currentRow,
   currentCol,
-  visited = new Set()
+  visited = new Set(),
+  previousDirection = null
 ) {
-  const possibleDirections = {
-    UP: { canGo: false, handler: checkVerticalChar },
-    DOWN: { canGo: false, handler: checkVerticalChar },
-    LEFT: { canGo: false, handler: checkHorizontalChar },
-    RIGHT: { canGo: false, handler: checkHorizontalChar },
-  };
+  // Direction reordering so it continues in right direction on different intersections
+  const directionOrder = getDirectionOrder(previousDirection);
 
   // Go through all possible directions and check if its valid and unvisited
-  Object.keys(possibleDirections).forEach((direction) => {
-    possibleDirections[direction].canGo = isValidAndUnvisited(
+  Object.keys(POSSIBLE_DIRECTIONS).forEach((direction) => {
+    POSSIBLE_DIRECTIONS[direction].greenLight = isValidAndUnvisited(
       currentRow + DIRECTIONS[direction].row,
       currentCol + DIRECTIONS[direction].col,
       visited,
       grid,
-      possibleDirections[direction].handler
+      POSSIBLE_DIRECTIONS[direction].handler
     );
   });
-
   // Add validation to array
   const validDirections = [];
-  if (possibleDirections.RIGHT.canGo) validDirections.push(DIRECTIONS.RIGHT);
-  if (possibleDirections.LEFT.canGo) validDirections.push(DIRECTIONS.LEFT);
-  if (possibleDirections.UP.canGo) validDirections.push(DIRECTIONS.UP);
-  if (possibleDirections.DOWN.canGo) validDirections.push(DIRECTIONS.DOWN);
+
+  directionOrder.forEach((direction) => {
+    if (POSSIBLE_DIRECTIONS[direction].greenLight) {
+      validDirections.push(DIRECTIONS[direction]);
+    }
+  });
 
   if (validDirections.length === 1) {
     return validDirections[0];
   }
 
   return validDirections.length > 0 ? validDirections[0] : null;
+}
+
+// ---------------  LOCAL FUNCTIONS ---------------
+function getDirectionOrder(previousDirection) {
+  let directionOrder = [];
+  if (previousDirection) {
+    // Find the key of the previous direction
+    const prevDirKey = Object.keys(DIRECTIONS).find(
+      (key) =>
+        DIRECTIONS[key].row === previousDirection.row &&
+        DIRECTIONS[key].col === previousDirection.col
+    );
+    if (prevDirKey) {
+      directionOrder = [
+        prevDirKey,
+        ...Object.keys(DIRECTIONS).filter((d) => d !== prevDirKey),
+      ];
+    } else {
+      directionOrder = Object.keys(DIRECTIONS);
+    }
+  } else {
+    directionOrder = Object.keys(DIRECTIONS);
+  }
+  return directionOrder;
 }
