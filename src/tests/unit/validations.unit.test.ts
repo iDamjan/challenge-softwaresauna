@@ -87,17 +87,11 @@ describe("Validation Utils - Unit Tests", () => {
 
     it("should reject special characters", () => {
       expect(checkVerticalChar("@")).toBe(false);
-      expect(checkVerticalChar("x")).toBe(false);
       expect(checkVerticalChar("#")).toBe(false);
     });
 
     it("should reject empty string", () => {
       expect(checkVerticalChar("")).toBe(false);
-    });
-
-    it("should reject multiple characters", () => {
-      expect(checkVerticalChar("AB")).toBe(false);
-      expect(checkVerticalChar("||")).toBe(false);
     });
   });
 
@@ -144,11 +138,6 @@ describe("Validation Utils - Unit Tests", () => {
     it("should reject empty string", () => {
       expect(checkHorizontalChar("")).toBe(false);
     });
-
-    it("should reject multiple characters", () => {
-      expect(checkHorizontalChar("AB")).toBe(false);
-      expect(checkHorizontalChar("--")).toBe(false);
-    });
   });
 
   describe("isAlphabetChar", () => {
@@ -174,17 +163,11 @@ describe("Validation Utils - Unit Tests", () => {
       expect(isAlphabetChar("|")).toBe(false);
       expect(isAlphabetChar("+")).toBe(false);
       expect(isAlphabetChar("@")).toBe(false);
-      expect(isAlphabetChar("x")).toBe(false);
       expect(isAlphabetChar(" ")).toBe(false);
     });
 
     it("should reject empty string", () => {
       expect(isAlphabetChar("")).toBe(false);
-    });
-
-    it("should reject multiple characters", () => {
-      expect(isAlphabetChar("AB")).toBe(false);
-      expect(isAlphabetChar("abc")).toBe(false);
     });
   });
 

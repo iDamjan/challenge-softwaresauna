@@ -6,6 +6,8 @@ export const testMap1 = [
   "    +---+",
 ];
 
+export const test = ["@-C-A-B-x"];
+
 export const testMap2 = [
   "@---A--- ",
   "        |",

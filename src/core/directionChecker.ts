@@ -59,27 +59,20 @@ export function checkDirection({
 
 // ---------------  LOCAL FUNCTIONS ---------------
 function getDirectionOrder(previousDirection: Direction | null) {
-  let directionOrder = [];
-  if (previousDirection) {
-    // Find the key of the previous direction
-    const directionKeys = Object.keys(DIRECTIONS) as Array<
-      keyof typeof DirectionsEnum
-    >;
-    const prevDirKey = directionKeys.find(
-      (key) =>
-        DIRECTIONS[key].row === previousDirection.row &&
-        DIRECTIONS[key].col === previousDirection.col
-    );
-    if (prevDirKey) {
-      directionOrder = [
-        prevDirKey,
-        ...Object.keys(DIRECTIONS).filter((d) => d !== prevDirKey),
-      ];
-    } else {
-      directionOrder = Object.keys(DIRECTIONS);
-    }
-  } else {
-    directionOrder = Object.keys(DIRECTIONS);
-  }
-  return directionOrder;
+  if (!previousDirection) return Object.keys(DIRECTIONS);
+
+  const directionKeys = Object.keys(DIRECTIONS) as Array<
+    keyof typeof DirectionsEnum
+  >;
+  const prevDirKey = directionKeys.find(
+    (key) =>
+      DIRECTIONS[key].row === previousDirection.row &&
+      DIRECTIONS[key].col === previousDirection.col
+  );
+  if (!prevDirKey) return Object.keys(DIRECTIONS);
+
+  return [
+    prevDirKey,
+    ...Object.keys(DIRECTIONS).filter((d) => d !== prevDirKey),
+  ];
 }

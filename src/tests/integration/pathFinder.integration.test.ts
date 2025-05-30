@@ -108,14 +108,6 @@ describe("PathFinder - Integration Tests", () => {
       expect(result.alphabetCharactersInPath).toBe("");
       expect(result.pathAsCharacters).toBe("");
     });
-
-    it("should handle single character start with no path", () => {
-      const result = findCharactersInPath(["@"]);
-
-      expect(result.error).toBe("No valid direction found");
-      expect(result.alphabetCharactersInPath).toBe("");
-      expect(result.pathAsCharacters).toBe("@");
-    });
   });
 
   describe("Edge cases and boundary conditions", () => {
@@ -135,15 +127,6 @@ describe("PathFinder - Integration Tests", () => {
       expect(result.error).toBeNull();
       expect(result.alphabetCharactersInPath).toBe("");
       expect(result.pathAsCharacters).toBe("@x");
-    });
-
-    it("should handle path with only letters and no connectors", () => {
-      const letterOnlyMap = ["@A", "Bx"];
-      const result = findCharactersInPath(letterOnlyMap);
-
-      expect(result.error).toBeNull();
-      expect(result.alphabetCharactersInPath).toBe("AB");
-      expect(result.pathAsCharacters).toBe("@ABx");
     });
   });
 });

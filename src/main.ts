@@ -8,10 +8,11 @@ import {
   testMap7,
   testMap8,
   testMap9,
+  test,
 } from "./data/testMaps";
 import findCharactersInPath from "./core/pathFinder";
 
-const result = findCharactersInPath(testMap2);
+const result = findCharactersInPath(test);
 
 console.log(
   result.pathAsCharacters,
