@@ -1,17 +1,27 @@
 import { checkDirection } from "./directionChecker";
-import { isAlphabetChar } from "@/utils/validations";
-import { DIRECTIONS, INTERSECTION_DIRECTIONS } from "@/constants/directions";
-import type { DirectionsEnum } from "@/types/directions";
+import {
+  isAlphabetChar,
+  isValidIntermediatePosition,
+} from "@/utils/validations";
+import { INTERSECTION_DIRECTIONS } from "@/constants/directions";
+import type { DirectionsEnum, WalkingResult } from "@/types/directions";
 import type { Direction } from "@/types/directions";
 
 // Add a visited set to track coordinates
-function walkPath(grid: string[], startRow: number, startCol: number) {
-  let currentRow = startRow;
-  let currentCol = startCol;
+function walkPath(
+  grid: string[],
+  startRow: number,
+  startCol: number
+): WalkingResult {
+  const walkingCoordinates = {
+    currentRow: startRow,
+    currentCol: startCol,
+  };
+
+  // Collected information variables
   let alphabetCharactersInPath = "";
   let pathAsCharacters = "";
   let previousDirection = null;
-  let direction = null;
 
   // Track visited coordinates as strings "row,col"
   const visited: Set<string> = new Set();
@@ -19,55 +29,44 @@ function walkPath(grid: string[], startRow: number, startCol: number) {
 
   // Walk through the elements, break the cycle if 'x' or not a valid direction
   while (true) {
-    const currentChar = grid[currentRow][currentCol];
+    const currentChar =
+      grid[walkingCoordinates.currentRow][walkingCoordinates.currentCol];
 
     if (currentChar === "x") {
       pathAsCharacters += currentChar;
       break;
     }
 
-    // Find next direction (pass visited set)
-    const regularDirection = checkDirection({
+    const direction = handleDirection(
       grid,
-      currentRow,
-      currentCol,
+      walkingCoordinates.currentRow,
+      walkingCoordinates.currentCol,
       visited,
-      previousDirection,
-    });
+      previousDirection
+    );
 
-    if (!regularDirection) {
-      // If there is no valid direction check for intersections
-      const intersection = pathIntersectionHandler(
-        grid,
-        currentRow,
-        currentCol,
-        visited
-      );
-      if (!intersection.state) {
-        return {
-          alphabetCharactersInPath,
-          pathAsCharacters,
-          error: "No valid direction found",
-        };
-      } else {
-        direction = intersection.direction;
-      }
-    } else {
-      direction = regularDirection;
+    if (!direction) {
+      return {
+        alphabetCharactersInPath,
+        pathAsCharacters,
+        error: "No valid direction found",
+      };
     }
 
-    // Collect letters
+    // Collect information - letters and path characters
     if (isAlphabetChar(currentChar)) {
       alphabetCharactersInPath += currentChar;
     }
-    pathAsCharacters += grid[currentRow][currentCol];
+    pathAsCharacters += currentChar;
 
     // Move to next position
-    currentRow += direction?.row ?? 0;
-    currentCol += direction?.col ?? 0;
+    walkingCoordinates.currentRow += direction?.row ?? 0;
+    walkingCoordinates.currentCol += direction?.col ?? 0;
 
     // Mark as visited
-    visited.add(`${currentRow},${currentCol}`);
+    visited.add(
+      `${walkingCoordinates.currentRow},${walkingCoordinates.currentCol}`
+    );
 
     // Set previous direction so we know where to go on intersections
     previousDirection = direction;
@@ -76,6 +75,7 @@ function walkPath(grid: string[], startRow: number, startCol: number) {
   return { alphabetCharactersInPath, pathAsCharacters, error: null };
 }
 
+// ---------------  LOCAL FUNCTIONS ---------------
 function pathIntersectionHandler(
   grid: string[],
   row: number,
@@ -91,29 +91,19 @@ function pathIntersectionHandler(
     keyof typeof DirectionsEnum
   >;
 
-  possibleDirectionsKeys.forEach((direction) => {
+  for (const direction of possibleDirectionsKeys) {
+    const intermediateRow = row + INTERSECTION_DIRECTIONS[direction].row;
+    const intermediateCol = col + INTERSECTION_DIRECTIONS[direction].col;
+
     // Check if the intermediate position (1 step away) is valid and contains a valid path character
-    const intermediateRow = row + DIRECTIONS[direction].row;
-    const intermediateCol = col + DIRECTIONS[direction].col;
+    const validIntermediatePosition = isValidIntermediatePosition(grid, {
+      row: intermediateRow,
+      col: intermediateCol,
+    });
 
-    // Check bounds for intermediate position
-    if (
-      intermediateRow < 0 ||
-      intermediateRow >= grid.length ||
-      intermediateCol < 0 ||
-      intermediateCol >= grid[intermediateRow].length
-    ) {
-      return; // Continue the loop for tnext direction
+    if (!validIntermediatePosition) {
+      continue;
     }
-
-    const intermediateChar = grid[intermediateRow][intermediateCol];
-
-    // The intermediate character must be a valid path character (not empty space)
-    // Valid path characters: letters, +, -, |, x
-    if (!/^[a-zA-Z\|\-\+x]$/.test(intermediateChar)) {
-      return; // Continue to next direction
-    }
-
     // Now check the actual destination (2 steps away)
     const updatedRow = row + INTERSECTION_DIRECTIONS[direction].row;
     const updatedCol = col + INTERSECTION_DIRECTIONS[direction].col;
@@ -129,9 +119,38 @@ function pathIntersectionHandler(
       intersection.state = true;
       intersection.direction = INTERSECTION_DIRECTIONS[direction];
     }
-  });
+  }
 
   return intersection;
+}
+
+function handleDirection(
+  grid: string[],
+  row: number,
+  col: number,
+  visited: Set<string>,
+  previousDirection: Direction | null
+) {
+  // Find next direction (pass visited set)
+  const regularDirection = checkDirection({
+    grid,
+    currentRow: row,
+    currentCol: col,
+    visited,
+    previousDirection,
+  });
+
+  if (!regularDirection) {
+    // If there is no valid direction check for intersections
+    const intersection = pathIntersectionHandler(grid, row, col, visited);
+    if (!intersection.state) {
+      return null;
+    } else {
+      return intersection.direction;
+    }
+  } else {
+    return regularDirection;
+  }
 }
 
 export default walkPath;

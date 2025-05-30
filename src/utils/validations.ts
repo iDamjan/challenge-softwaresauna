@@ -1,3 +1,5 @@
+import type { Direction } from "@/types/directions";
+
 export function checkValidChar(
   row: number,
   col: number,
@@ -37,4 +39,23 @@ export function isValidAndUnvisited(
 ) {
   if (visited.has(`${row},${col}`)) return false;
   return checkValidChar(row, col, grid, directionChecker);
+}
+
+export function isValidIntermediatePosition(
+  grid: string[],
+  position: Direction
+): boolean {
+  // Check bounds
+  if (
+    position.row < 0 ||
+    position.row >= grid.length ||
+    position.col < 0 ||
+    position.col >= grid[position.row].length
+  ) {
+    return false;
+  }
+
+  // Check if character is a valid path character
+  const char = grid[position.row][position.col];
+  return /^[a-zA-Z\|\-\+x]$/.test(char);
 }

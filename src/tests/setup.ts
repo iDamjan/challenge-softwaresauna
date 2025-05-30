@@ -1,6 +1,3 @@
-// Test setup and configuration
-import { vi } from "vitest";
-
 // Global test configuration
 export const testConfig = {
   timeout: 5000,
@@ -16,12 +13,6 @@ export const createMockGrid = (pattern: string[]): string[] => {
 export const createVisitedSet = (coordinates: string[]): Set<string> => {
   return new Set(coordinates);
 };
-
-// Mock console.log to avoid noise in tests
-vi.stubGlobal("console", {
-  ...console,
-  log: vi.fn(),
-});
 
 // Common test data
 export const testGrids = {

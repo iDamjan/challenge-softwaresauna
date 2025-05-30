@@ -3,17 +3,11 @@ import walkPath from "./pathWalker";
 function findCharactersInPath(grid: string[]) {
   const startingCoordinates = findStartingPoint(grid);
 
-  if (startingCoordinates.length === 0) {
+  if (startingCoordinates.length === 0 || startingCoordinates.length > 1) {
     return {
       alphabetCharactersInPath: "",
       pathAsCharacters: "",
       error: "No starting point found",
-    };
-  } else if (startingCoordinates.length > 1) {
-    return {
-      alphabetCharactersInPath: "",
-      pathAsCharacters: "",
-      error: "Multiple starting points found",
     };
   }
 
@@ -31,8 +25,8 @@ function findCharactersInPath(grid: string[]) {
 function findStartingPoint(grid: string[]) {
   let startingCoordinates = [];
   for (let index = 0; index < grid.length; index++) {
-    const path = grid[index];
-    const startingPointColumn = path.indexOf("@");
+    const currentRow = grid[index];
+    const startingPointColumn = currentRow.indexOf("@");
     const startingPointRow = index;
 
     // If starting point index is bigger or equal to 0, means start is found

@@ -30,7 +30,7 @@ export function checkDirection({
     keyof typeof DirectionsEnum
   >;
   // Go through all possible directions and check if its valid and unvisited
-  possibleDirectionsKeys.forEach((direction) => {
+  for (const direction of possibleDirectionsKeys) {
     POSSIBLE_DIRECTIONS[direction].greenLight = isValidAndUnvisited(
       currentRow + DIRECTIONS[direction].row,
       currentCol + DIRECTIONS[direction].col,
@@ -38,17 +38,18 @@ export function checkDirection({
       grid,
       POSSIBLE_DIRECTIONS[direction].handler
     );
-  });
+  }
   // Add validation to array
   const validDirections: Direction[] = [];
 
-  directionOrder.forEach((direction) => {
-    if (POSSIBLE_DIRECTIONS[direction].greenLight) {
+  for (const direction of directionOrder) {
+    const hasPossibleDirection = POSSIBLE_DIRECTIONS[direction].greenLight;
+    if (hasPossibleDirection) {
       validDirections.push(
         DIRECTIONS[direction as keyof typeof DirectionsEnum]
       );
     }
-  });
+  }
 
   if (validDirections.length === 1) {
     return validDirections[0];

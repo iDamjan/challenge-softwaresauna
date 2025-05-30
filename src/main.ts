@@ -1,3 +1,4 @@
+// Use this for testing purposes
 import {
   testMap1,
   testMap2,
@@ -8,11 +9,10 @@ import {
   testMap7,
   testMap8,
   testMap9,
-  test,
 } from "./data/testMaps";
 import findCharactersInPath from "./core/pathFinder";
 
-const result = findCharactersInPath(test);
+const result = findCharactersInPath(testMap9);
 
 console.log(
   result.pathAsCharacters,

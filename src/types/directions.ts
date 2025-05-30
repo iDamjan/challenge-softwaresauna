@@ -12,6 +12,12 @@ export interface Direction {
   col: number;
 }
 
+export interface WalkingResult {
+  alphabetCharactersInPath: string;
+  pathAsCharacters: string;
+  error: string | null;
+}
+
 export interface CheckDirection {
   grid: string[];
   currentRow: number;

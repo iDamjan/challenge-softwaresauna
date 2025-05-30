@@ -71,4 +71,5 @@ export const testMap8 = [
   "    x",
 ];
 
+// Find characters in tight spaces
 export const testMap9 = [" +-L-+", " | |+A-+", "@B+ ++ H", " ++    x"];
