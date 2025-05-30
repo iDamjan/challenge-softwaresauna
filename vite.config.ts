@@ -1,9 +1,14 @@
-import { defineConfig } from "vite";
+/// <reference types="vitest" />
+import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   resolve: {
     alias: {
-      "@": "/src",
+      "@": new URL("./src", import.meta.url).pathname,
     },
+  },
+  test: {
+    globals: true,
+    environment: "node",
   },
 });

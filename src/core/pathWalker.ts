@@ -1,6 +1,6 @@
 import { checkDirection } from "./directionChecker";
 import { isAlphabetChar } from "@/utils/validations";
-import { INTERSECTION_DIRECTIONS } from "@/constants/directions";
+import { DIRECTIONS, INTERSECTION_DIRECTIONS } from "@/constants/directions";
 import type { DirectionsEnum } from "@/types/directions";
 import type { Direction } from "@/types/directions";
 
@@ -20,7 +20,7 @@ function walkPath(grid: string[], startRow: number, startCol: number) {
   // Walk through the elements, break the cycle if 'x' or not a valid direction
   while (true) {
     const currentChar = grid[currentRow][currentCol];
-    console.log(currentChar);
+
     if (currentChar === "x") {
       pathAsCharacters += currentChar;
       break;
@@ -92,6 +92,29 @@ function pathIntersectionHandler(
   >;
 
   possibleDirectionsKeys.forEach((direction) => {
+    // Check if the intermediate position (1 step away) is valid and contains a valid path character
+    const intermediateRow = row + DIRECTIONS[direction].row;
+    const intermediateCol = col + DIRECTIONS[direction].col;
+
+    // Check bounds for intermediate position
+    if (
+      intermediateRow < 0 ||
+      intermediateRow >= grid.length ||
+      intermediateCol < 0 ||
+      intermediateCol >= grid[intermediateRow].length
+    ) {
+      return; // Continue the loop for tnext direction
+    }
+
+    const intermediateChar = grid[intermediateRow][intermediateCol];
+
+    // The intermediate character must be a valid path character (not empty space)
+    // Valid path characters: letters, +, -, |, x
+    if (!/^[a-zA-Z\|\-\+x]$/.test(intermediateChar)) {
+      return; // Continue to next direction
+    }
+
+    // Now check the actual destination (2 steps away)
     const updatedRow = row + INTERSECTION_DIRECTIONS[direction].row;
     const updatedCol = col + INTERSECTION_DIRECTIONS[direction].col;
 

@@ -29,12 +29,12 @@ export function isAlphabetChar(char: string) {
 }
 
 export function isValidAndUnvisited(
-  row,
-  col,
-  visited,
-  pathsArray,
-  directionChecker
+  row: number,
+  col: number,
+  visited: Set<string>,
+  grid: string[],
+  directionChecker: (char: string) => boolean
 ) {
   if (visited.has(`${row},${col}`)) return false;
-  return checkValidChar(row, col, pathsArray, directionChecker);
+  return checkValidChar(row, col, grid, directionChecker);
 }
