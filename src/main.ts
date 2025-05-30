@@ -12,7 +12,7 @@ import {
 } from "./data/testMaps";
 import findCharactersInPath from "./core/pathFinder";
 
-const result = findCharactersInPath(testMap9);
+const result = findCharactersInPath(testMap6);
 
 console.log(
   result.pathAsCharacters,

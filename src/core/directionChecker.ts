@@ -29,6 +29,7 @@ export function checkDirection({
   const possibleDirectionsKeys = Object.keys(POSSIBLE_DIRECTIONS) as Array<
     keyof typeof DirectionsEnum
   >;
+
   // Go through all possible directions and check if its valid and unvisited
   for (const direction of possibleDirectionsKeys) {
     POSSIBLE_DIRECTIONS[direction].greenLight = isValidAndUnvisited(
